@@ -21,6 +21,8 @@ source-repository head
 
 common common-options
   build-depends:       base ^>= 4.13.0.0
+                     , bytestring
+                     , vector
   
   ghc-options:         -Wall
                        -Wcompat
@@ -43,6 +45,7 @@ library
   import:              common-options
   hs-source-dirs:      src
   exposed-modules:     RayTracing
+                     , Vec3
 
 executable ray-tracing
   import:              common-options
