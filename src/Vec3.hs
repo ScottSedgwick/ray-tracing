@@ -1,8 +1,12 @@
 module Vec3 
-  ( Vec3
+  ( Colour
+  , Dirn3
+  , Point3
+  , Vec3
   , (<<+)
   , (<<-)
   , (<<*)
+  , (<<**)
   , dot
   , cross
   , toVec
@@ -10,9 +14,10 @@ module Vec3
   , unitVec
   ) where
 
-import Data.Word (Word16)
-
-type Vec3   = (Word16, Word16, Word16)
+type Vec3   = (Double, Double, Double)
+type Colour = Vec3
+type Point3 = Vec3
+type Dirn3  = Vec3
 
 (<<+) :: Vec3 -> Vec3 -> Vec3
 (<<+) (x0,y0,z0) (x1,y1,z1) = (x0 + x1, y0 + y1, z0 + z1)
@@ -23,14 +28,17 @@ type Vec3   = (Word16, Word16, Word16)
 (<<*) :: Vec3 -> Vec3 -> Vec3
 (<<*) (x0,y0,z0) (x1,y1,z1) = (x0 * x1, y0 * y1, z0 * z1)
 
-(<</) :: Vec3 -> Word16 -> Vec3
-(<</) (x,y,z) t = (x `div` t, y `div` t, z `div` t)
+(<<**) :: Vec3 -> Double -> Vec3
+(<<**) (x,y,z) m = (x * m, y * m, z * m)
 
-infixl 7  <<*, <</
+(<</) :: Vec3 -> Double -> Vec3
+(<</) (x,y,z) t = (x / t, y / t, z / t)
+
+infixl 7  <<*, <</, <<**
 infixl 6  <<+, <<-
 
-dot :: Vec3 -> Vec3 -> Vec3
-dot = (<<*)
+dot :: Vec3 -> Vec3 -> Double
+dot (x0, y0, z0) (x1, y1, z1) = x0 * x1 + y0 * y1 + z0 * z1
 
 cross :: Vec3 -> Vec3 -> Vec3
 cross (x0,y0,z0) (x1,y1,z1) = 
@@ -39,14 +47,14 @@ cross (x0,y0,z0) (x1,y1,z1) =
   , x0 * y1 - y0 * x1
   );
 
-toVec :: Word16 -> Vec3
+toVec :: Double -> Vec3
 toVec n = (n, n, n)
 
 unitVec :: Vec3 -> Vec3
 unitVec v = v <</ vlen v
 
-vlen :: Vec3 -> Word16
-vlen = round . sqrt . fromIntegral . vlenSquared
+vlen :: Vec3 -> Double
+vlen = sqrt . vlenSquared
 
-vlenSquared :: Vec3 -> Word16
+vlenSquared :: Vec3 -> Double
 vlenSquared (x,y,z) = x*x + y*y + z*z
