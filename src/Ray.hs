@@ -15,10 +15,7 @@ module Ray
        , rayAt
        ) where
 
-import qualified Data.ByteString.Lazy as B
-import           Data.ByteString.Builder (intDec, string7, toLazyByteString, word16BE)
-import qualified Data.Vector as V
-import           Vec3 (Dirn3, Point3, Vec3, (<<+), (<<*), toVec)
+import           Vec3 (Dirn3, Point3, (<<+), (<<**))
 
 data Ray = Ray
   { origin :: Point3
@@ -26,4 +23,4 @@ data Ray = Ray
   }
 
 rayAt :: Ray -> Double -> Point3
-rayAt r t = origin r <<+ dirn r <<* toVec t
+rayAt r t = origin r <<+ dirn r <<** t

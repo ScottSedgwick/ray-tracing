@@ -12,6 +12,7 @@ module Vec3
   , toVec
   , (<</)
   , unitVec
+  , vlenSquared
   ) where
 
 type Vec3   = (Double, Double, Double)

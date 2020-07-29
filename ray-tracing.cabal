@@ -44,8 +44,13 @@ common common-options
 library
   import:              common-options
   hs-source-dirs:      src
-  exposed-modules:     Ppm
+  exposed-modules:     Camera
+                     , Chapters
+                     , Hit
+                     , Ppm
                      , Ray
+                     , Sphere
+                     , Utils
                      , Vec3
 
 executable ray-tracing
