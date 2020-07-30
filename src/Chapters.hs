@@ -10,7 +10,7 @@ module Chapters
 import qualified Data.ByteString.Lazy as B
 -- import qualified Data.Vector as V
 
-import Camera (camera)
+import Camera (render)
 import Hit (HitRecord(..), Hittable(..))
 import Vec3 (Point3, (<<+), (<<-), (<<**), dot, unitVec, vlenSquared)
 import qualified Ppm
@@ -29,13 +29,13 @@ chapter02_2 = do
   B.writeFile "ppm/chapter02_2.ppm" (Ppm.pack ppm)
 
 chapter04 :: IO()
-chapter04 = generateFile "ppm/chapter04.ppm" $ camera rayColour_4
+chapter04 = generateFile "ppm/chapter04.ppm" $ render rayColour_4
 
 chapter05 :: IO()
-chapter05 = generateFile "ppm/chapter05.ppm" $ camera rayColour_5 
+chapter05 = generateFile "ppm/chapter05.ppm" $ render rayColour_5 
 
 chapter06_1 :: IO()
-chapter06_1 = generateFile "ppm/chapter06.ppm" $ camera rayColour6_1 
+chapter06_1 = generateFile "ppm/chapter06.ppm" $ render rayColour6_1 
 
 generateFile :: String -> Ppm.Ppm -> IO()
 generateFile filename ppm = B.writeFile filename (Ppm.pack ppm)
@@ -84,7 +84,7 @@ rayColour6_1 ray =
     t1 = (y + 1) * 0.5
 
 chapter06_2 :: IO()
-chapter06_2 = generateFile "ppm/chapter06_2.ppm" $ camera (rayColour6_2 world)
+chapter06_2 = generateFile "ppm/chapter06_2.ppm" $ render (rayColour6_2 world)
   where
     world = 
       [ Sphere { centre = (0, 0, -1), radius = 0.5 }
