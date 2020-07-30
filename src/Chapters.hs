@@ -13,20 +13,20 @@ import qualified Data.ByteString.Lazy as B
 import Camera (render)
 import Hit (HitRecord(..), Hittable(..))
 import Vec3 (Point3, (<<+), (<<-), (<<**), dot, unitVec, vlenSquared)
-import qualified Ppm
+import Ppm (Colour, Ppm, colour, emptyPpm, packPpm, ppm, ppmf)
 import Ray (Ray(..), rayAt)
 import Sphere (Sphere(..))
 import Utils (infinity)
 
 chapter02_1 :: IO()
 chapter02_1 = do
-  let ppm = Ppm.ppm (Ppm.empty 3 2) [(65535, 0, 0), (0, 65535, 0), (0, 0, 65535), (65535, 65535, 0), (65535, 65535, 65535), (0, 0, 0)]
-  B.writeFile "ppm/chapter02_1.ppm" (Ppm.pack ppm)
+  let p' = ppm (emptyPpm 3 2) [(65535, 0, 0), (0, 65535, 0), (0, 0, 65535), (65535, 65535, 0), (65535, 65535, 65535), (0, 0, 0)]
+  B.writeFile "ppm/chapter02_1.ppm" (packPpm p')
 
 chapter02_2 :: IO()
 chapter02_2 = do
-  let ppm = Ppm.ppmf (Ppm.empty 256 256) (\(x,y,_) -> (x, y, 64) <<** 256)
-  B.writeFile "ppm/chapter02_2.ppm" (Ppm.pack ppm)
+  let p' = ppmf (emptyPpm 256 256) (\(x,y,_) -> (x, y, 64) <<** 256)
+  B.writeFile "ppm/chapter02_2.ppm" (packPpm p')
 
 chapter04 :: IO()
 chapter04 = generateFile "ppm/chapter04.ppm" $ render rayColour_4
@@ -37,18 +37,18 @@ chapter05 = generateFile "ppm/chapter05.ppm" $ render rayColour_5
 chapter06_1 :: IO()
 chapter06_1 = generateFile "ppm/chapter06.ppm" $ render rayColour6_1 
 
-generateFile :: String -> Ppm.Ppm -> IO()
-generateFile filename ppm = B.writeFile filename (Ppm.pack ppm)
+generateFile :: String -> Ppm -> IO()
+generateFile filename p' = B.writeFile filename (packPpm p')
 
-rayColour_4 :: Ray -> Ppm.Colour
-rayColour_4 r = Ppm.colour ((1,1,1) <<** (1 - t') <<+ (0.5, 0.7, 1) <<** t')
+rayColour_4 :: Ray -> Colour
+rayColour_4 r = colour ((1,1,1) <<** (1 - t') <<+ (0.5, 0.7, 1) <<** t')
   where
     (_, uy, _) = unitVec (dirn r)
     t' = (uy + 1) * 0.5
 
-rayColour_5 :: Ray -> Ppm.Colour
+rayColour_5 :: Ray -> Colour
 rayColour_5 r = if hitSphere_5 (0, 0, -1) 0.5 r
-                then Ppm.colour (1,0,0)
+                then colour (1,0,0)
                 else rayColour_4 r
      
 hitSphere_5 :: Point3 -> Double -> Ray -> Bool
@@ -72,11 +72,11 @@ hitSphere6_1 cntr rds ray =
     c = vlenSquared oc - rds * rds
     discriminant = halfB * halfB - a * c
 
-rayColour6_1 :: Ray -> Ppm.Colour
+rayColour6_1 :: Ray -> Colour
 rayColour6_1 ray = 
   if t0 > 0
-  then Ppm.colour (n <<+ (1,1,1) <<** 0.5)
-  else Ppm.colour ((1,1,1) <<** (1 - t1) <<+ (0.5, 0.7, 1.0) <<** t1)
+  then colour (n <<+ (1,1,1) <<** 0.5)
+  else colour ((1,1,1) <<** (1 - t1) <<+ (0.5, 0.7, 1.0) <<** t1)
   where
     t0 = hitSphere6_1 (0, 0, -1) 0.5 ray
     n = unitVec (rayAt ray t0 <<- (0, 0, -1))
@@ -92,14 +92,14 @@ chapter06_2 = generateFile "ppm/chapter06_2.ppm" $ render (rayColour6_2 world)
       ]
     
 
-rayColour6_2 :: (Hittable a, Foldable t) => t a -> Ray -> Ppm.Colour
+rayColour6_2 :: (Hittable a, Foldable t) => t a -> Ray -> Colour
 rayColour6_2 world ray = f $ hit ray 0 infinity world
   where
     f Nothing = bgcolor ray
-    f (Just hitrec) = Ppm.colour $ normal hitrec <<+ (1,1,1) <<** 0.5
+    f (Just hitrec) = colour $ normal hitrec <<+ (1,1,1) <<** 0.5
 
-bgcolor :: Ray -> Ppm.Colour
-bgcolor ray = Ppm.colour ((1,1,1) <<** (1 - t1) <<+ (0.5, 0.7, 1.0) <<** t1)
+bgcolor :: Ray -> Colour
+bgcolor ray = colour ((1,1,1) <<** (1 - t1) <<+ (0.5, 0.7, 1.0) <<** t1)
   where
     (_,y,_) = unitVec (dirn ray)
     t1 = (y + 1) * 0.5

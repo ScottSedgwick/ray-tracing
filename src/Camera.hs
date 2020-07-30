@@ -1,7 +1,7 @@
 module Camera (render) where
 
 import Vec3 (Point3, Vec3, (<<+), (<<-), (<</), (<<**))
-import qualified Ppm
+import Ppm (Colour, Ppm, emptyPpm, ppmf)
 import Ray (Ray(..))
 
 data Camera = Camera
@@ -41,8 +41,8 @@ getRay u v = Ray
   , dirn = lowerLeftCorner camera <<+ (horizontal camera <<** u) <<+ (vertical camera <<** v) <<- origin' camera
   }
 
-render :: (Ray -> Ppm.Colour) -> Ppm.Ppm
-render rayColour = Ppm.ppmf (Ppm.empty imageWidth imageHeight) renderBg
+render :: (Ray -> Colour) -> Ppm
+render rayColour = ppmf (emptyPpm imageWidth imageHeight) renderBg
   where
     imageWidth = 400 :: Int
     imageHeight = round (fromIntegral imageWidth / aspectRatio camera) :: Int

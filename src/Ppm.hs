@@ -1,4 +1,4 @@
-module Ppm (Colour, Ppm, colour, colourDepth, empty, pack, ppm, ppmf) where
+module Ppm (Colour, Ppm, colour, colourDepth, emptyPpm, packPpm, ppm, ppmf) where
 
 import qualified Data.ByteString.Lazy as B
 import           Data.ByteString.Builder (Builder, intDec, string7, toLazyByteString, word8, word16BE)
@@ -12,7 +12,8 @@ data Ppm = Ppm
 }
 
 colourDepth :: Int
-colourDepth = 255
+-- colourDepth = 255
+colourDepth = 65535
 
 packColour :: Colour -> Builder
 packColour (r,g,b) = 
@@ -41,15 +42,15 @@ ppmf p f = Ppm
   , pixels = V.map f (zplane p)
   }
 
-empty :: Int -> Int -> Ppm
-empty w h = Ppm
+emptyPpm :: Int -> Int -> Ppm
+emptyPpm w h = Ppm
   { height = h
   , width = w
   , pixels = V.empty
   }
 
-pack :: Ppm -> B.ByteString
-pack p = toLazyByteString $ 
+packPpm :: Ppm -> B.ByteString
+packPpm p = toLazyByteString $ 
   string7 "P6 "
   <> intDec (width p)
   <> string7 " "
