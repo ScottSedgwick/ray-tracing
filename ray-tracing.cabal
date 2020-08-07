@@ -22,6 +22,7 @@ source-repository head
 common common-options
   build-depends:       base ^>= 4.13.0.0
                      , bytestring
+                     , random
                      , vector
   
   ghc-options:         -Wall
@@ -46,6 +47,7 @@ library
   hs-source-dirs:      src
   exposed-modules:     Camera
                      , Chapters
+                     , Colour
                      , Hit
                      , Ppm
                      , Ray

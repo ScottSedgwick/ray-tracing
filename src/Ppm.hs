@@ -1,32 +1,16 @@
-module Ppm (Colour, Ppm, colour, colourDepth, emptyPpm, packPpm, ppm, ppmf) where
+module Ppm (Colour, Ppm, emptyPpm, packPpm, ppm, ppmf) where
 
+import           Colour (Colour, colourDepth, packColour)
 import qualified Data.ByteString.Lazy as B
-import           Data.ByteString.Builder (Builder, intDec, string7, toLazyByteString, word8, word16BE)
+import           Data.ByteString.Builder (intDec, string7, toLazyByteString)
 import qualified Data.Vector as V
-import           Vec3 (Colour, Point3)
+import           Vec3 (Point3)
 
 data Ppm = Ppm
   { height :: !Int
   , width :: !Int
   , pixels :: V.Vector Colour
 }
-
-colourDepth :: Int
--- colourDepth = 255
-colourDepth = 65535
-
-packColour :: Colour -> Builder
-packColour (r,g,b) = 
-  if colourDepth < 256
-  then word8 (round r) <> word8 (round g) <> word8 (round b)
-  else word16BE (round r) <> word16BE (round g) <> word16BE (round b)
-
-colour :: Point3 -> Colour
-colour (r,g,b) = (f r, f g, f b)
-  where
-    f x | x < 0 = 0.0
-        | x > 1 = fromIntegral colourDepth 
-        | otherwise = x * fromIntegral colourDepth
 
 ppm :: Ppm -> [Colour] -> Ppm
 ppm p cs = Ppm

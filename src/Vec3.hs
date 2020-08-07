@@ -1,6 +1,5 @@
 module Vec3 
-  ( Colour
-  , Dirn3
+  ( Dirn3
   , Point3
   , Vec3
   , (<<+)
@@ -16,7 +15,6 @@ module Vec3
   ) where
 
 type Vec3   = (Double, Double, Double)
-type Colour = Vec3
 type Point3 = Vec3
 type Dirn3  = Vec3
 

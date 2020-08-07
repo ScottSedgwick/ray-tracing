@@ -1,8 +1,10 @@
-module Camera (render) where
+module Camera (render, renderAA) where
 
+import Colour (sumColour)
 import Vec3 (Point3, Vec3, (<<+), (<<-), (<</), (<<**))
 import Ppm (Colour, Ppm, emptyPpm, ppmf)
 import Ray (Ray(..))
+import System.Random (StdGen, randomRs)
 
 data Camera = Camera
   { aspectRatio :: Double
@@ -47,10 +49,24 @@ render rayColour = ppmf (emptyPpm imageWidth imageHeight) renderBg
     imageWidth = 400 :: Int
     imageHeight = round (fromIntegral imageWidth / aspectRatio camera) :: Int
     
-    renderBg (i,j,_) =
-      let
+    renderBg (i,j,_) = rayColour r
+      where
         u = i / fromIntegral (imageWidth - 1)
         v = j / fromIntegral (imageHeight - 1)
         r = getRay u v
-      in 
-        rayColour r
+        
+
+renderAA :: StdGen -> (Ray -> Colour) -> Ppm
+renderAA g rayColour = ppmf (emptyPpm imageWidth imageHeight) renderBgAA
+  where
+    imageWidth = 400 :: Int
+    imageHeight = round (fromIntegral imageWidth / aspectRatio camera) :: Int
+    samplesPerPixel = 100
+
+    renderBgAA (i,j,_) = sumColour cs
+      where
+        rnds = zip (take samplesPerPixel (randomRs (0, 1) g) :: [Double]) (take samplesPerPixel (randomRs (0, 1) g) :: [Double])
+        uvs = map (\(u,v) -> ((i + u) / fromIntegral (imageWidth - 1), (j + v) / fromIntegral (imageHeight - 1))) rnds
+        cs = map (rayColour . uncurry getRay) uvs
+        
+  
